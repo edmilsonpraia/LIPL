@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allora - Gestao de Evento</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ──────────────────────── -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="../Allora - Logo 1 (2).png" alt="Allora">
+    </div>
+    <h1 class="login-title">ALLORA</h1>
+    <p class="login-subtitle">Gestao de Evento</p>
+
+    <div id="login-form">
+      <div class="login-field">
+        <label>Utilizador</label>
+        <input type="text" id="login-user" placeholder="Nome de utilizador" autocomplete="off">
+      </div>
+      <div class="login-field">
+        <label>Senha</label>
+        <input type="password" id="login-pass" placeholder="Palavra-passe">
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <button class="btn btn-primary login-btn" onclick="doLogin()">Entrar</button>
+    </div>
+
+    <div class="login-hint">
+      <details>
+        <summary>Contas disponiveis</summary>
+        <table class="login-hint-table">
+          <tr><th>Utilizador</th><th>Senha</th><th>Perfil</th></tr>
+          <tr><td>admin</td><td>admin123</td><td>Administrador</td></tr>
+          <tr><td>coord</td><td>coord123</td><td>Coordenador</td></tr>
+          <tr><td>viewer</td><td>viewer123</td><td>Visualizador</td></tr>
+        </table>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ── APP (hidden until login) ──────────── -->
+<div class="app" id="app-main" style="display:none">
+
+  <!-- ── HEADER ──────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo"><img src="../Allora - Logo 1 (2).png" alt="Allora"></div>
+      <span class="header-title">ALLORA</span>
+      <span class="header-subtitle">Gestao de Evento</span>
+    </div>
+    <div class="header-right">
+      <div class="countdown">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Evento em preparacao
+      </div>
+      <span class="header-date" id="header-date"></span>
+      <div class="user-menu" id="user-menu">
+        <div class="user-avatar" id="user-avatar" onclick="toggleUserMenu()"></div>
+        <div class="user-dropdown" id="user-dropdown">
+          <div class="user-dropdown-info">
+            <div class="user-dropdown-name" id="dropdown-name"></div>
+            <div class="user-dropdown-role" id="dropdown-role"></div>
+          </div>
+          <div class="user-dropdown-sep"></div>
+          <div class="user-dropdown-item" id="nav-manage-users" onclick="navigate('users');closeUserMenu()" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            Gerir Utilizadores
+          </div>
+          <div class="user-dropdown-item" onclick="doLogout()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Terminar Sessao
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── SIDEBAR ─────────────────────────── -->
+  <aside class="sidebar">
+    <nav class="nav-section">
+      <div class="nav-label">Principal</div>
+
+      <div class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+
+      <div class="nav-item" data-page="mapa">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3V7z"/><path d="M9 4v13"/><path d="M15 7v13"/></svg>
+        Mapa Geral
+      </div>
+
+      <div class="nav-item" data-page="plano">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Plano de Trabalho
+      </div>
+
+      <div class="nav-item" data-page="checklist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist
+        <span class="nav-badge" id="check-badge">13</span>
+      </div>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-label">Gestao</div>
+
+      <div class="nav-item" data-page="equipas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Equipas
+      </div>
+
+      <div class="nav-item" data-page="docs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentos
+      </div>
+    </nav>
+
+    <div style="flex:1"></div>
+
+    <div class="nav-section">
+      <div class="sidebar-stats" id="sidebar-progress">
+        <!-- filled by JS -->
+      </div>
+      <button class="btn btn-secondary" id="btn-reset-data" style="width:100%;margin-top:10px;font-size:11px;justify-content:center" onclick="resetData()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 105.64-12.36L1 10"/></svg>
+        Repor Dados Originais
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ────────────────────── -->
+  <main class="main">
+    <div class="page active" id="page-dashboard"></div>
+    <div class="page" id="page-mapa"></div>
+    <div class="page" id="page-plano"></div>
+    <div class="page" id="page-checklist"></div>
+    <div class="page" id="page-equipas"></div>
+    <div class="page" id="page-docs"></div>
+    <div class="page" id="page-users"></div>
+  </main>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const d = new Date();
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('header-date').textContent = d.toLocaleDateString('pt-PT', opts);
+
+  // Enter key on login
+  document.getElementById('login-pass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('login-user').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('login-pass').focus();
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.user-menu')) closeUserMenu();
+  });
+</script>
+
+</body>
+</html>
