@@ -83,5 +83,23 @@ const DATA = {
   anexos: [
     { nome: "CC-CGGC-DQ-AIBC-20251105 - Solicitacao de Propostas Tecnicas e Comerciais para Renovacao da LAI do AHCC - ALLORA.pdf", caminho: "/mnt/data/CC-CGGC-DQ-AIBC-20251105.pdf" },
     { nome: "Termos de Referencia - Auditoria Ambiental Renovacao LAI AHCC.pdf", caminho: "/mnt/data/TdR_Auditoria_Ambiental.pdf" }
+  ],
+
+  instituicoes: [
+    {
+      nomeInstituicao: "Exemplo Instituicao",
+      responsavel: "Nome do Responsavel",
+      contacto: "+244 900 000 000",
+      email: "exemplo@instituicao.com",
+      tipoParceria: "Patrocinador Principal",
+      representanteIndicado: "Nome do Representante",
+      tarefas: "Apoio financeiro; divulgacao; presenca institucional",
+      recomendacoes: "Manter contacto regular; alinhar expectativas",
+      logotipo: "/logos/exemplo.png",
+      biografia: "Breve descricao da instituicao e sua missao",
+      painel: "Painel onde participa",
+      fotografia: "/fotos/exemplo.jpg",
+      datas: "2025-12-01 a 2026-02-15"
+    }
   ]
 };

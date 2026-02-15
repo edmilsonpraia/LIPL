@@ -186,6 +186,7 @@ function loadData() {
       if (saved.dashboard) DATA.dashboard = saved.dashboard;
       if (saved.equipas) DATA.equipas = saved.equipas;
       if (saved.anexos) DATA.anexos = saved.anexos;
+      if (saved.instituicoes) DATA.instituicoes = saved.instituicoes;
     }
   } catch(e) { console.warn('Erro ao carregar dados:', e); }
 }
@@ -199,7 +200,8 @@ function saveData() {
       checklist: DATA.checklist,
       dashboard: DATA.dashboard,
       equipas: DATA.equipas,
-      anexos: DATA.anexos
+      anexos: DATA.anexos,
+      instituicoes: DATA.instituicoes
     }));
   } catch(e) { console.warn('Erro ao guardar dados:', e); }
 }
@@ -331,6 +333,7 @@ function navigate(page) {
   if (page === 'checklist') renderChecklist();
   if (page === 'equipas') renderEquipas();
   if (page === 'docs') renderDocs();
+  if (page === 'instituicoes') renderInstituicoes();
   if (page === 'users') renderUsers();
 }
 
@@ -955,6 +958,117 @@ function deleteEquipa(i) {
     saveData();
     renderEquipas();
     showToast('Equipa eliminada');
+  });
+}
+
+// ══════════════════════════════════════════
+// INSTITUICAO & PATROCINIO
+// ══════════════════════════════════════════
+function renderInstituicoes() {
+  const el = document.getElementById('page-instituicoes');
+
+  let html = '<div class="team-grid">';
+  DATA.instituicoes.forEach(function(inst, i) {
+    const c = TEAM_COLORS[i % TEAM_COLORS.length];
+    const initials = inst.nomeInstituicao.substring(0, 2).toUpperCase();
+
+    html += '\
+      <div class="team-card">\
+        <div class="team-top">\
+          <div class="team-avatar" style="background:' + c + '30;color:' + c + '">' + initials + '</div>\
+          <div style="flex:1">\
+            <div class="team-name">' + inst.nomeInstituicao + '</div>\
+            <div class="team-resp">' + inst.responsavel + '</div>\
+          </div>\
+          <div style="display:flex;align-items:center;gap:8px">\
+            ' + actionBtn(ICONS.edit, 'Editar', 'editInstituicao(' + i + ')') + '\
+            ' + actionBtn(ICONS.trash, 'Eliminar', 'deleteInstituicao(' + i + ')', 'btn-del') + '\
+          </div>\
+        </div>\
+        <div style="margin-top:12px;font-size:12px;color:var(--text-muted);display:grid;gap:6px">\
+          <div><strong>Contacto:</strong> ' + inst.contacto + '</div>\
+          <div><strong>E-mail:</strong> ' + inst.email + '</div>\
+          <div><strong>Tipo de Parceria:</strong> ' + inst.tipoParceria + '</div>\
+          <div><strong>Representante Indicado:</strong> ' + inst.representanteIndicado + '</div>\
+          <div><strong>Tarefas:</strong> ' + inst.tarefas + '</div>\
+          <div><strong>Recomendacoes:</strong> ' + inst.recomendacoes + '</div>\
+          <div><strong>Painel:</strong> ' + inst.painel + '</div>\
+          <div><strong>Datas:</strong> ' + inst.datas + '</div>\
+        </div>\
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)">\
+          <div><strong>Biografia:</strong> ' + inst.biografia + '</div>\
+        </div>\
+      </div>';
+  });
+  html += '</div>';
+
+  el.innerHTML = '\
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">\
+      <div>\
+        <div class="page-title">Instituicao & Patrocinio</div>\
+        <div class="page-desc">' + DATA.instituicoes.length + ' instituicoes e patrocinadores</div>\
+      </div>\
+      ' + addBtnHTML('Adicionar Instituicao', 'addInstituicao()') + '\
+    </div>' + html;
+}
+
+function editInstituicao(i) {
+  if (!can('edit')) return showToast('Sem permissao para editar');
+  const inst = DATA.instituicoes[i];
+  openModal('Editar - ' + inst.nomeInstituicao, [
+    { key: 'nomeInstituicao', label: 'Nome da Instituicao', value: inst.nomeInstituicao },
+    { key: 'responsavel', label: 'Responsavel', value: inst.responsavel },
+    { key: 'contacto', label: 'Contacto', value: inst.contacto },
+    { key: 'email', label: 'E-mail', type: 'email', value: inst.email },
+    { key: 'tipoParceria', label: 'Tipo de Parceria', value: inst.tipoParceria },
+    { key: 'representanteIndicado', label: 'Representante Indicado', value: inst.representanteIndicado },
+    { key: 'tarefas', label: 'Tarefas', type: 'textarea', value: inst.tarefas },
+    { key: 'recomendacoes', label: 'Recomendacoes', type: 'textarea', value: inst.recomendacoes },
+    { key: 'logotipo', label: 'Logotipo (caminho)', value: inst.logotipo },
+    { key: 'biografia', label: 'Biografia', type: 'textarea', value: inst.biografia },
+    { key: 'painel', label: 'Painel', value: inst.painel },
+    { key: 'fotografia', label: 'Fotografia (caminho)', value: inst.fotografia },
+    { key: 'datas', label: 'Datas', value: inst.datas }
+  ], function(vals) {
+    Object.assign(DATA.instituicoes[i], vals);
+    saveData();
+    renderInstituicoes();
+    showToast('Instituicao actualizada');
+  });
+}
+
+function addInstituicao() {
+  if (!can('add')) return showToast('Sem permissao para adicionar');
+  openModal('Adicionar Instituicao', [
+    { key: 'nomeInstituicao', label: 'Nome da Instituicao', placeholder: 'Ex: Ministerio da Economia' },
+    { key: 'responsavel', label: 'Responsavel', placeholder: 'Nome do responsavel' },
+    { key: 'contacto', label: 'Contacto', placeholder: '+244 900 000 000' },
+    { key: 'email', label: 'E-mail', type: 'email', placeholder: 'exemplo@instituicao.com' },
+    { key: 'tipoParceria', label: 'Tipo de Parceria', placeholder: 'Ex: Patrocinador Principal' },
+    { key: 'representanteIndicado', label: 'Representante Indicado', placeholder: 'Nome do representante' },
+    { key: 'tarefas', label: 'Tarefas', type: 'textarea', placeholder: 'Lista de tarefas' },
+    { key: 'recomendacoes', label: 'Recomendacoes', type: 'textarea', placeholder: 'Recomendacoes relevantes' },
+    { key: 'logotipo', label: 'Logotipo (caminho)', placeholder: '/logos/exemplo.png' },
+    { key: 'biografia', label: 'Biografia', type: 'textarea', placeholder: 'Descricao da instituicao' },
+    { key: 'painel', label: 'Painel', placeholder: 'Painel onde participa' },
+    { key: 'fotografia', label: 'Fotografia (caminho)', placeholder: '/fotos/exemplo.jpg' },
+    { key: 'datas', label: 'Datas', placeholder: 'Ex: 2025-12-01 a 2026-02-15' }
+  ], function(vals) {
+    if (!vals.nomeInstituicao.trim()) return showToast('Nome da instituicao obrigatorio');
+    DATA.instituicoes.push(vals);
+    saveData();
+    renderInstituicoes();
+    showToast('Instituicao adicionada');
+  });
+}
+
+function deleteInstituicao(i) {
+  if (!can('delete')) return showToast('Sem permissao para eliminar');
+  confirmDelete('Eliminar instituicao "' + DATA.instituicoes[i].nomeInstituicao + '"?', function() {
+    DATA.instituicoes.splice(i, 1);
+    saveData();
+    renderInstituicoes();
+    showToast('Instituicao eliminada');
   });
 }
 
